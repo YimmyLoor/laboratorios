@@ -1,0 +1,81 @@
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Roles y permisos</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a routerLink="/inicio/perfil" style="cursor: pointer;">Perfil</a></li>
+            <li class="breadcrumb-item active">Roles y permisos</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">Formulario de registro</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                        <label for="">Rol</label>
+                                        <select (change)="cargarPermisosRol();" [(ngModel)]="idRol" id="selectRolPermiso" class="form-control">
+                                            <option value="0">SELECCIONA UN ROL</option>
+                                            <option value="{{item.id}}"  *ngFor="let item of arrayRoles; let i = index">{{item.descripcionRol}}</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                            
+                        </div>
+                        
+                        <div *ngIf="idRol != '0' && arrayModulos.length == 0" class="row">
+                            <div class="col-12 text-center">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...
+                            </div>
+                        </div>
+                        <div class="row"  *ngFor="let item of arrayModulos let i = index">
+                            <div class="col-lg-12 col-md-12">
+                                <div class="icheck-primary d-inline">
+                                    <input type="checkbox" id="{{item.id}}{{i}}" [(ngModel)]="item.checked">
+                                    <label for="{{item.id}}{{i}}">
+                                      {{item.descripcionModulo}}
+                                    </label>
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                        
+                        
+                    
+                        <br>
+                        <div *ngIf="idRol != '0' && arrayModulos.length > 0" class="row">
+                            <div  *ngIf="validarLoading==0" class="col-12">
+                                <button id="btnGuardarRoles" (click)="guardarPermiso()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                            </div>
+                            <div *ngIf="validarLoading==1" class="col-12">
+                                <button id="btnGuardarRolesLoading"  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span>Ingresando...</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</section>

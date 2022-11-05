@@ -1,0 +1,159 @@
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Banner</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a routerLink="/inicio/perfil" style="cursor: pointer;">Perfil</a></li>
+            <li class="breadcrumb-item active">Banner</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                      <h3 class="card-title">Formulario de registro</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 form-group">
+                                <label for="">Link (opcional)</label>
+                                <input [(ngModel)]="linkBanner" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6" style="border: solid 1px black;">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 form-group">
+                                        <br>
+                                        <input #inputFileBanner accept="image/*" type="file" (change)="onFileChange($event)" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                   
+                                    <div class="col-lg-12 col-md-12">
+                                        <image-cropper 
+                                        [imageChangedEvent]="imgChangeEvt" 
+                                        [maintainAspectRatio]="true" 
+                                        [aspectRatio]="114 / 43"
+                                       
+                                        format="png" 
+                                        (imageCropped)="cropImg($event)" 
+                                        (imageLoaded)="imgLoad()"
+                                        (cropperReady)="initCropper()" 
+                                        (loadImageFailed)="imgFailed()">
+                                        </image-cropper>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6" style="border: solid 1px black;">
+                                <br>
+                               
+                                  <h6>Vista previa (997x376) píxeles</h6>
+                                  <br>
+                                  <img style="width: 100%;" [src]="cropImgPreview" />
+                              </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <div  *ngIf="validarLoading==0" class="col-12">
+                                    <button (click)="guardarBanner()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                                </div>
+                                <div *ngIf="validarLoading==1" class="col-12">
+                                    <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        <span>Ingresando...</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                      <h3 class="card-title">Listado de Banners</h3>
+                    </div>
+  
+                    <div class="card-body">
+                      
+                        <div [style.display]="validarLoadingTabla" class="row">
+                            <div class="col-12 text-center">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...
+                            </div>
+                        </div>
+                        <div  [style.display]="validarTabla" class="table-responsive">
+                        
+                           <table class="table row-border hover">
+                              <thead>
+                                  <tr>
+                                      <th>#</th>
+                                      <th>Link</th>
+                                      <th>Banner</th>
+
+                                      <th>Opciones</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                    <tr  *ngFor="let item of arrayBanners; let i = index">
+                                        <td>{{i+1}}</td>
+                                        <td><a class="btn btn-block btn-outline-success btn-xs" target="_blank" href="{{item.link}}">Link</a></td>
+                                        <td style="width: 30%;">
+                                            <img style="width: 100%;" *ngIf="item.rutaBanner == ''" src="assets/admin/app/logo.png" alt="">
+                                            <img data-toggle="modal" data-target="#modalVerBanner"  (click)="verBanner(item)" style="width: 100%; cursor: pointer;" *ngIf="item.rutaBanner != ''" src="{{item.rutaBanner}}" alt="">
+
+                                        </td>
+                                        <td>
+                                            <button (click)="presentarMenuEliminarBanner(item)" type="button" class="btn btn-block btn-outline-danger btn-xs">Eliminar</button>
+    
+                                        </td>
+                                  </tr>
+                              </tbody>
+                          </table> 
+                      </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+    <div #modalVerBanner class="modal fade" id="modalVerBanner">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Banner</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              
+              <div class="row">
+                  
+                  <div class="col-lg-12 col-md-12">
+                      <h6>Vista</h6>
+                      <img style="width: 100%;" [src]="rutaBannerSeleccionado" />
+                  </div>
+              </div>
+              <br>
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</section>

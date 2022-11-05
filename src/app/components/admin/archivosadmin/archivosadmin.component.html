@@ -1,0 +1,165 @@
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Archivos</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a routerLink="/inicio/perfil" style="cursor: pointer;">Perfil</a></li>
+            <li class="breadcrumb-item active">Archivos</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                      <h3 class="card-title">Formulario de registro</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 form-group">
+                                <label for="">Laboratorios</label>
+                                <select name="" id="" class="form-control" [(ngModel)]="objArchivo.idLaboratorio">
+                                    <option value="0" >SELECCIONA UN LABORATORIO</option>
+                                    <option value="{{item.id}}"  *ngFor="let item of arrayLaboratorios; let i = index">{{item.nombreLaboratorio}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 form-group">
+                                <label for="">Tipo archivo</label>
+                                <select name="" id="" class="form-control" [(ngModel)]="objArchivo.idTipoArchivo">
+                                    <option value="0" >SELECCIONA UN TIPO DE ARCHIVO</option>
+                                    <option value="{{item.id}}"  *ngFor="let item of arrayTipoArchivos; let i = index">{{item.descripcionTipoArchivo}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 form-group">
+                                <label for="">Nombre</label>
+                                <input class="form-control" type="text" maxlength="500" name="" id="" [(ngModel)]="objArchivo.nombreArchivo">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 form-group">
+                                <label for="">Descripción</label>
+                                <textarea class="form-control" name="" id=""  rows="5" maxlength="500" [(ngModel)]="objArchivo.descripcionArchivo"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <br>
+                                <input #inputFile type="file" (change)="onFileChange($event)" />
+
+                              
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <div  *ngIf="validarLoading==0" class="col-12">
+                                    <button (click)="guardarArchivo()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                                </div>
+                                <div *ngIf="validarLoading==1" class="col-12">
+                                    <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        <span>Ingresando...</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                      <h3 class="card-title">Listado de Archivos</h3>
+                    </div>
+  
+                    <div class="card-body">
+                      
+                      <div class="table-responsive">
+                        
+                           <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table row-border hover">
+                              <thead>
+                                  <tr>
+                                      <th>#</th>
+                                      <th>Nombre</th>
+                                      <th>Descripcion</th>
+                                      <th>Laboratorio</th>
+                                      <th>Tipo</th>
+                                      <th>Archivo</th>
+                                      <th>Opciones</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                    <tr  *ngFor="let item of arrayArchivos; let i = index">
+                                        <td>{{i+1}}</td>
+                                        <td>{{item.nombreArchivo}}</td>
+                                        <td>{{item.descripcionArchivo}}</td>
+                                        <td>{{item.nombreLaboratorio}}</td>
+                                        <td>{{item.descripcionTipoArchivo}}</td>
+                                        <td style="width: 10%;">
+                                           <a target="_blank" href="{{item.rutaArchivo}}">
+                                            <img *ngIf="item.identificador == 1" style="width: 50%;" src="assets/admin/app/pdf.png" alt="">
+                                            <img *ngIf="item.identificador == 2" style="width: 50%;" src="assets/admin/app/word.png" alt="">
+                                            <img *ngIf="item.identificador == 3" style="width: 50%;" src="assets/admin/app/excel.png" alt="">
+                                            <img *ngIf="item.identificador == 4" style="width: 50%;" src="assets/admin/app/ppt.png" alt="">
+
+                                           </a>
+
+                                        </td>
+                                   
+                                        <td>
+                                             <button (click)="presentarMenuEliminarArchivo(item)" type="button" class="btn btn-block btn-danger btn-xs">Eliminar</button>
+     
+                                        </td>
+                                  </tr>
+                              </tbody>
+                          </table> 
+                      </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+
+  <!--   
+    <div #modalVerBanner class="modal fade" id="modalVerBanner">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Banner</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              
+              <div class="row">
+                  
+                  <div class="col-lg-12 col-md-12">
+                      <h6>Vista</h6>
+                      <img style="width: 100%;" [src]="rutaBannerSeleccionado" />
+                  </div>
+              </div>
+              <br>
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div> -->
+</section>

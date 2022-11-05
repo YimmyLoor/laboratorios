@@ -1,0 +1,174 @@
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Noticias</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a routerLink="/inicio/perfil" style="cursor: pointer;">Perfil</a></li>
+            <li class="breadcrumb-item active">Noticias</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                      <h3 class="card-title">Formulario de registro de noticias</h3>
+                      <div class="card-tools">
+                        <button type="button" class="btn btn-success btn-sm" data-card-widget="collapse" title="Collapse">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-lg-4 col-md-4">
+                          <div class="form-group">
+                              <label for="">Título</label>
+                              <input [(ngModel)]="objNoticia.tituloNoticia" type="text" class="form-control">
+                          </div>
+                          <div class="form-group">
+                            <label for="">Resumen (500 caracteres)</label>
+                            <textarea rows="5" [(ngModel)]="objNoticia.resumenNoticia" maxlength="500" type="text" class="form-control"></textarea>
+                          </div>
+                          <div class="form-group">
+                            <label for="">Foto</label>
+                            <input #inputFileFoto accept="image/*" type="file" (change)="onFileChange($event)" />
+                          </div>
+                        </div>
+                        <div class="col-lg-8 col-md-8">
+                          <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                              <image-cropper 
+                              [imageChangedEvent]="objNoticia.imgChangeEvt" 
+                              [maintainAspectRatio]="true" 
+                              [aspectRatio]="589 / 444"
+                             
+                              format="png" 
+                              (imageCropped)="cropImg($event)" 
+                              (imageLoaded)="imgLoad()"
+                              (cropperReady)="initCropper()" 
+                              (loadImageFailed)="imgFailed()">
+                            </image-cropper>
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                              <img style="width: 100%;" [src]="objNoticia.cropImgPreview" />
+                            </div>
+                          </div>
+                         
+                         
+                        </div>
+                      </div>
+                      <br>
+                      <div class="row">
+                        
+                        <div class="col-lg-12 col-md-12">
+                          <div style="text-align: center;">
+                            <h3 >Contenido de la noticia</h3>
+                          </div>
+                          
+                          <ckeditor
+                          [(ngModel)]="objNoticia.ckeditorContent">
+                        </ckeditor>
+                        </div>
+                      </div>
+                      <div *ngIf="objNoticia.id == 0" class="row">
+                        <div  *ngIf="objNoticia.validarLoading==0" class="col-12">
+                            <button (click)="guardarNoticia()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                        </div>
+                        <div *ngIf="objNoticia.validarLoading==1" class="col-12">
+                            <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span>Guardando...</span>
+                            </button>
+                        </div> 
+                    </div>
+                    <div *ngIf="objNoticia.id > 0" class="row">
+                      <div  *ngIf="objNoticia.validarLoading==0" class="col-12">
+                          <button (click)="guardarNoticia()" type="button" class="btn btn-block btn-outline-success btn-lg">Modificar</button>
+                          <button (click)="cancelarModificar()" type="button" class="btn btn-block btn-outline-danger btn-lg">Cancelar</button>
+
+                      </div>
+                      <div *ngIf="objNoticia.validarLoading==1" class="col-12">
+                          <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              <span>Modificando...</span>
+                          </button>
+                      </div> 
+                  </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          
+        </div>
+      </div>
+      <div class="row">
+          <div class="col-md-12">
+              <div class="card card-success">
+                <div class="card-header">
+                  <h3 class="card-title">Listado de Noticias</h3>
+                </div>
+
+                <div class="card-body">
+                  
+                  <div [style.display]="validarLoadingTabla" class="row">
+                    <div class="col-12 text-center">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...
+                    </div>
+                  </div>
+                  <div  [style.display]="validarTabla" class="table-responsive">
+                    
+                       <table class="table row-border hover">
+                          <thead>
+                              <tr>
+                                  <th>#</th>
+                                  <th>Título</th>
+                                  <th>Resumen</th>
+                                  <th>Fecha</th>
+                                  <th>Foto</th>
+                                  <th>Opciones</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr  *ngFor="let item of arrayNoticias; let i = index">
+                                  <td>{{i+1}}</td>
+                                  <td style="font-weight: bold;">{{item.tituloNoticia}}</td>
+                                  <td>{{item.resumenNoticia}}</td>
+                                  <td>{{item.fechaNoticia}}</td>
+                                  <td style="width: 10%;">
+                                    <img style="width: 100%;" *ngIf="item.rutaFotoNoticia == ''" src="assets/admin/app/logo.png" alt="">
+                                    <img style="width: 100%;" *ngIf="item.rutaFotoNoticia != ''" src="{{item.rutaFotoNoticia}}" alt="">
+                                   <!--  <button  data-toggle="modal" data-target="#modalLogo" (click)="presentarFormularioLogo(item)" type="button" class="btn btn-block btn-success btn-xs">Nuevo logo</button><br>
+ -->
+
+                                </td>
+                                  <td>
+                                    <button  (click)="cargarFormularioModificar(item)" type="button" class="btn btn-block btn-outline-success btn-xs">Modificar</button>
+                                    <button (click)="presentarMenuEliminar(item)" type="button" class="btn btn-block btn-outline-danger btn-xs">Eliminar</button>
+                                   <!--    <button  data-toggle="modal" data-target="#modalModificar" (click)="presentarFormularioModificar(item)" type="button" class="btn btn-block btn-outline-success btn-xs">Modificar</button><br>
+                                      <button (click)="presentarMenuEliminarUnidad(item)" type="button" class="btn btn-block btn-outline-danger btn-xs">Eliminar</button>
+ -->
+                                  </td>
+                              </tr>
+                          </tbody>
+                      </table> 
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>

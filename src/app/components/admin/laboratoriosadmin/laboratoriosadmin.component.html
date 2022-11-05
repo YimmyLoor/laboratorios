@@ -1,0 +1,293 @@
+
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Laboratorios</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a routerLink="/inicio/perfil" style="cursor: pointer;">Perfil</a></li>
+            <li class="breadcrumb-item active">Laboratorios</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                  <div class="card-header">
+                    <h3 class="card-title">Formulario de registro</h3>
+                  </div>
+                  <div class="card-body">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                            <label for="">Unidad</label>
+                            <select [(ngModel)]="idUnidad" class="form-control">
+                                <option value="0">SELECCIONA UNA UNIDAD</option>
+                                <option value="{{item.id}}"  *ngFor="let item of arrayUnidades; let i = index">{{item.nombreUnidad}} ({{item.nombreCarrera}})</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                            <label for="">Responsable</label>
+                              <ng-select 
+                            [items]="arrayUsuarios"
+                            bindLabel="fullName"
+                            bindValue="id"
+                            placeholder="SELECCIONA EL NOMBRE DEL USUARIO"
+                            [(ngModel)]="idUsuario"
+                            >
+
+
+                            </ng-select>
+                            <!-- <select [(ngModel)]="idUsuario" class="form-control">
+                                <option value="0">SELECCIONA UN RESPONSABLE</option>
+                                <option value="{{item.id}}"  *ngFor="let item of arrayUsuarios; let i = index">{{item.apellidos}} {{item.nombres}}</option>
+                            </select> -->
+                          </div>
+                        </div>
+                      </div>
+                      <label for="">Nombre del laboratorio</label>
+                      <input [(ngModel)]="nombreLaboratorio" class="form-control" type="text" placeholder="Nombre del laboratorio">
+                      <br>
+                      <label for="">Descripcion del laboratorio</label>
+                      <textarea  class="form-control" [(ngModel)]="descripcionLaboratorio" rows="4"></textarea>
+                      <br>
+                      <div class="row">
+                          <div  *ngIf="validarLoading==0" class="col-12">
+                              <button (click)="guardarLaboratorio()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                          </div>
+                          <div *ngIf="validarLoading==1" class="col-12">
+                              <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                  <span>Ingresando...</span>
+                              </button>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                  <div class="card-header">
+                    <h3 class="card-title">Listado de Laboratorios</h3>
+                  </div>
+
+                  <div class="card-body">
+                    <div [style.display]="validarLoadingTabla" class="row">
+                      <div class="col-12 text-center">
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...
+                      </div>
+                    </div>
+                    <div [style.display]="validarTabla" class="table-responsive">
+                        <table  datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table row-border hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Responsable</th>
+                                    <th>Unidad</th>
+                                    <th>Carrera</th>
+                                    <th>Foto</th>
+                                    <th>Opciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr  *ngFor="let item of arrayLaboratorios; let i = index">
+                                    <td *ngIf="item.activo == false" style="background-color: #FFCECE;">{{i+1}}</td>
+                                    <td *ngIf="item.activo == false" style="background-color: #FFCECE;">{{item.nombreLaboratorio}}</td>
+                                    <td *ngIf="item.activo == false" style="background-color: #FFCECE;">{{item.descripcionLaboratorio}}</td>
+                                    <td *ngIf="item.activo == false" style="background-color: #FFCECE;">{{item.apellidos}} {{item.nombres}}</td>
+
+                                    <td *ngIf="item.activo == false" style="background-color: #FFCECE;">{{item.nombreUnidad}}</td>
+                                    <td *ngIf="item.activo == false" style="background-color: #FFCECE;">{{item.nombreCarrera}}</td>
+                                    <td *ngIf="item.activo == false" style="background-color: #FFCECE;width: 15%;">
+                                      <img style="width: 100%;" *ngIf="item.rutaFotoLaboratorio == ''" src="assets/admin/app/logo.png" alt="">
+                                      <img style="width: 100%;" *ngIf="item.rutaFotoLaboratorio != ''" src="{{item.rutaFotoLaboratorio}}" alt="">
+                                      <button  data-toggle="modal" data-target="#modalFoto" (click)="presentarFormularioFoto(item)" type="button" class="btn btn-block btn-success btn-xs">Nueva foto</button><br>
+
+                                    </td>
+                                    <td *ngIf="item.activo == false" style="background-color: #FFCECE;">
+                                        <button (click)="presentarMenuModificar(item)" type="button" class="btn btn-block btn-warning btn-xs">Activar</button><br>
+                                        <button  data-toggle="modal" data-target="#modalModificar" (click)="presentarFormularioModificar(item)" type="button" class="btn btn-block btn-success btn-xs">Modificar</button><br>
+                                        <button (click)="presentarMenuEliminarLaboratorio(item)" type="button" class="btn btn-block btn-danger btn-xs">Eliminar</button>
+
+                                    </td>
+                                    <td *ngIf="item.activo == true">{{i+1}}</td>
+                                    <td *ngIf="item.activo == true">{{item.nombreLaboratorio}}</td>
+                                    <td *ngIf="item.activo == true">{{item.descripcionLaboratorio}}</td>
+                                    <td *ngIf="item.activo == true">{{item.apellidos}} {{item.nombres}}</td>
+
+                                    <td *ngIf="item.activo == true">{{item.nombreUnidad}}</td>
+                                    <td *ngIf="item.activo == true">{{item.nombreCarrera}}</td>
+                                    <td style="width: 15%;" *ngIf="item.activo == true">
+                                      <img style="width: 100%;" *ngIf="item.rutaFotoLaboratorio == ''" src="assets/admin/app/logo.png" alt="">
+                                      <img style="width: 100%;" *ngIf="item.rutaFotoLaboratorio != ''" src="{{item.rutaFotoLaboratorio}}" alt="">
+                                      <button  data-toggle="modal" data-target="#modalFoto" (click)="presentarFormularioFoto(item)" type="button" class="btn btn-block btn-success btn-xs">Nueva foto</button><br>
+
+                                    </td>
+                                    <td *ngIf="item.activo == true">
+                                       <button (click)="presentarMenuModificar(item)" type="button" class="btn btn-block btn-warning btn-xs">Desactivar</button><br>
+
+                                        <button  data-toggle="modal" data-target="#modalModificar" (click)="presentarFormularioModificar(item)" type="button" class="btn btn-block btn-outline-success btn-xs">Modificar</button><br>
+                                        <button (click)="presentarMenuEliminarLaboratorio(item)" type="button" class="btn btn-block btn-outline-danger btn-xs">Eliminar</button>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div #modalFoto class="modal fade" id="modalFoto">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Foto</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <div class="row">
+                      <div class="col-lg-12 col-md-12">
+                        <input #inputFileFoto accept="image/*" type="file" (change)="onFileChange($event)" />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-12 col-md-12">
+                        <image-cropper 
+                          [imageChangedEvent]="imgChangeEvt" 
+                          [maintainAspectRatio]="true" 
+                          [aspectRatio]="589 / 444"
+                         
+                          format="png" 
+                          (imageCropped)="cropImg($event)" 
+                          (imageLoaded)="imgLoad()"
+                          (cropperReady)="initCropper()" 
+                          (loadImageFailed)="imgFailed()">
+                        </image-cropper>
+                      </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+          
+                    <h6>Vista previa</h6>
+                    <img style="width: 100%;" [src]="cropImgPreview" />
+                 
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div  *ngIf="validarLoadingFoto==0" class="col-12">
+                    <button (click)="guardarFotoLaboratorio()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                </div>
+                <div *ngIf="validarLoadingFoto==1" class="col-12">
+                    <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span>Guardando...</span>
+                    </button>
+                </div> 
+            </div>
+
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div #modalModificar class="modal fade" id="modalModificar">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Modificar</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <select [(ngModel)]="objModificarLaboratorio.idUnidad" class="form-control">
+                      <option value="0">SELECCIONA UNA UNIDAD</option>
+                      <option value="{{item.id}}"  *ngFor="let item of arrayUnidades; let i = index">{{item.nombreUnidad}} ({{item.nombreCarrera}})</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="">Resposable</label>
+                  <ng-select 
+                    [items]="arrayUsuarios"
+                    bindLabel="fullName"
+                    bindValue="id"
+                    placeholder="SELECCIONA EL NOMBRE DEL USUARIO"
+                    [(ngModel)]="objModificarLaboratorio.idUsuario"
+                    >
+
+
+                    </ng-select>
+                  <!-- <select [(ngModel)]="objModificarLaboratorio.idUsuario" class="form-control">
+                      <option value="0">SELECCIONA UN RESPONSABLE</option>
+                      <option value="{{item.id}}"  *ngFor="let item of arrayUsuarios; let i = index">{{item.apellidos}} {{item.nombres}}</option>
+                  </select> -->
+                </div>
+              </div>
+            </div>
+            <label for="">Nombre del laboratorio</label>
+            <input [(ngModel)]="objModificarLaboratorio.nombreLaboratorio" class="form-control" type="text" placeholder="Nombre del laboratorio">
+            <br>
+            <label for="">Descripcion del laboratorio</label>
+            <textarea  class="form-control" [(ngModel)]="objModificarLaboratorio.descripcionLaboratorio" rows="4"></textarea>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <button *ngIf="objModificarLaboratorio.validarLoading == 0" (click)="modificarLaboratorio()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                </div>
+                <div *ngIf="objModificarLaboratorio.validarLoading == 1" class="col-12">
+                    <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span>Modificando...</span>
+                    </button>
+                </div>
+            </div>
+
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+</section>

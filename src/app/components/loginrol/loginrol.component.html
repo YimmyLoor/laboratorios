@@ -1,0 +1,100 @@
+
+<div [style.height]="altoPagina" class="image"> 
+    <div class="overlay hold-transition login-page ">
+        <div class="login-box ">
+<!--             <div class="login-logo">
+                <a style="cursor: pointer;"><b>Unidades y laboratorios</b> ESPAM MFL</a>
+            </div> -->
+            <div class="card">
+                <div class="card-body login-card-body">
+    
+                    <div class="card-body box-profile">
+                        <div class="text-center">
+                            <img *ngIf="objUsuario.rutaFoto == ''" class="profile-user-img img-fluid img-circle" src="assets/admin/app/user.png" alt="User profile picture">
+                            <img *ngIf="objUsuario.rutaFoto != ''" class="profile-user-img img-fluid img-circle" src="{{objUsuario.rutaFoto}}" alt="User profile picture">
+                        </div>
+                    </div>
+                    <p class="login-box-msg">{{objUsuario.apellidos}} {{objUsuario.nombres}}</p>
+                    
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                            <select [(ngModel)]="idRol" id="selectRol" name="selectRol" class="form-control">
+                                <option value="0">SELECCIONA UN ROL</option>
+                                <option value="{{item.id}}"  *ngFor="let item of arrayRoles; let i = index">{{item.descripcionRol}}</option>
+                            </select>
+                            </div>
+                        </div>
+                        </div>
+                    <div class="row">
+                        <div  *ngIf="validarLoading==0" class="col-12">
+                            <button id="btnIniciarSesionRol" name="btnIniciarSesionRol" (click)="iniciarSesion()" type="button" class="btn btn-success btn-block">Ingresar</button>
+                        </div>
+                        <div *ngIf="validarLoading==1" class="col-12">
+                            <button id="btnIniciarSesionRol" name="btnIniciarSesionRol" class="btn btn-success btn-block" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span>Ingresando...</span>
+                            </button>
+                        </div>
+                      
+                        
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div  *ngIf="validarLoading==0" class="col-12">
+                            <button id="btnCancelarInicioSesion" (click)="cancelar()" type="button" class="btn btn-danger btn-block">Cancelar</button>
+                        </div>
+                    </div>
+        
+    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div class="hold-transition login-page">
+
+
+
+    <div class="login-box">
+        <div class="login-logo">
+        <a style="cursor: pointer;"><b>Unidades y laboratorios</b> ESPAM MFL</a>
+        </div>
+        <div class="card">
+            <div class="card-body login-card-body">
+
+                <div class="card-body box-profile">
+                    <div class="text-center">
+                        <img *ngIf="objUsuario.rutaFoto == ''" class="profile-user-img img-fluid img-circle" src="assets/admin/app/user.png" alt="User profile picture">
+                        <img *ngIf="objUsuario.rutaFoto != ''" class="profile-user-img img-fluid img-circle" src="{{objUsuario.rutaFoto}}" alt="User profile picture">
+                    </div>
+                </div>
+                <p class="login-box-msg">{{objUsuario.apellidos}} {{objUsuario.nombres}}</p>
+                
+                <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group">
+                        <select [(ngModel)]="idRol" class="form-control">
+                            <option value="0">SELECCIONA UN ROL</option>
+                            <option value="{{item.id}}"  *ngFor="let item of arrayRoles; let i = index">{{item.descripcionRol}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                <div class="row">
+                    <div  *ngIf="validarLoading==0" class="col-12">
+                        <button (click)="iniciarSesion()" type="button" class="btn btn-primary btn-block">Ingresar</button>
+                    </div>
+                    <div *ngIf="validarLoading==1" class="col-12">
+                        <button  class="btn btn-primary btn-block" type="button" disabled>
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <span>Ingresando...</span>
+                        </button>
+                    </div>
+                </div>
+    
+
+            </div>
+        </div>
+    </div>
+</div> -->

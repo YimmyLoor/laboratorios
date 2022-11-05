@@ -1,0 +1,275 @@
+<section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+              <h3 class="profile-username text-center">Listado de laboratorios</h3>
+              <ul *ngIf="validarLoadingTabla == 1" class="list-group list-group-unbordered mb-3">
+                <li  style="cursor: pointer;" class="list-group-item text-center">
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...
+                </li>
+              </ul>
+
+              <ul *ngIf="validarLoadingTabla == 0" class="list-group list-group-unbordered mb-3">
+                <li (click)="seleccionarLaboratorio(item);" [style.background-color]="item.color" style="cursor: pointer;" *ngFor="let item of arrayLaboratorios; let i = index" class="list-group-item">
+                  <b>{{item.nombreLaboratorio}}</b> <p>{{item.nombreUnidad}}</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+        </div>
+   <!--      <button (click)="generatePDF()" class="btn btn-primary">PDF</button> -->
+        <div class="col-md-9" *ngIf="objLaboratorioSeleccionado.nombreLaboratorio == ''">
+          <div class="card">
+            <div class="card-body">
+              <div class="tab-content">
+                <div class="callout callout-success">
+                  <h5>Selecciona un laboratorio en el menú</h5>
+                  <p>Selecciona el horario que vas a reservar</p>
+                </div>
+                <div class="callout callout-success">
+                  <h5>Asiste a la hora seleccionada</h5>
+                  <p></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-9" *ngIf="objLaboratorioSeleccionado.nombreLaboratorio != ''">
+            <div class="card">
+              <div class="card-header p-2">
+                <h5 *ngIf="objLaboratorioSeleccionado.nombreLaboratorio != ''">{{objLaboratorioSeleccionado.nombreLaboratorio}} - {{objLaboratorioSeleccionado.nombreUnidad}}</h5>
+              </div>
+              <div class="card-body">
+                <div class="tab-content">
+                  
+                  <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+
+
+                </div>
+              </div>
+            </div>
+           
+        </div>
+      </div>
+    </div>
+    <ng-template #modalDetalleReserva let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Detalle de la reserva</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <div class="row">
+              <div class="col-12 text-center">
+                <h4>{{objDetalleReservar.nombreDia}} {{objDetalleReservar.fecha}} de {{objDetalleReservar.horaInicio}} a {{objDetalleReservar.horaFin}}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="table-responsive">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Nombre de la práctica:</td>
+                    <td style="font-weight: bold;">{{objDetalleReservar.nombrePractica}}</td>
+                  </tr>
+                  <tr>
+                    <td>Descripción de la práctica:</td>
+                    <td style="font-weight: bold;">{{objDetalleReservar.descripcionPractica}}</td>
+                  </tr>
+                  <tr>
+                    <td>Número de estudiantes:</td>
+                    <td style="font-weight: bold;">{{objDetalleReservar.numeroEstudiantes}}</td>
+                  </tr>
+                  <tr>
+                    <td style="vertical-align: middle;">Archivo PDF:</td>
+                    <td style="font-weight: bold;vertical-align: middle;">
+                      
+                      <a target="_blank" href="{{objDetalleReservar.rutaArchivo}}">
+                        <img style="width: 10%;" src="assets/admin/app/pdf.png" alt="">
+                      </a>
+                      
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="form-group">
+              <label for="">Ingresa el motivo</label>
+              <input [(ngModel)]="objDetalleReservar.motivoCancelar" class="form-control" type="text" maxlength="100">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          
+            <div *ngIf="validarLoadingReservar == 0" class="col-12">
+                <button (click)="presentarFormularioEliminarReserva(objDetalleReservar);"  type="button" class="btn btn-block btn-outline-danger btn-lg">Liberar horario</button>
+            </div>
+            <div *ngIf="validarLoadingReservar==1" class="col-12">
+              <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <span>Liberando...</span>
+              </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Cerrar</button>
+      </div>
+    </ng-template>
+
+
+    <ng-template #mymodal let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Reservar laboratorio en la fecha {{objReservar.fecha}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <div class="row">
+              <div class="col-12 text-center">
+                <h4>Los siguientes horarios están disponibles</h4>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              
+              <div *ngFor="let item of arrayConfiguracionView; let i = index" class="col-3">
+                <div class="form-group clearfix">
+                  <div class="icheck-primary d-inline">
+                    <input (change)="validarHorarioChecked();" type="checkbox" [(ngModel)]="item.checked" id="idConfigurarHorario{{item.id}}">
+                    <label  for="idConfigurarHorario{{item.id}}">
+                      {{item.horaInicio}} - {{item.horaFin}} 
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="totalSeleccionados > 0" class="col-12">
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="">Nombre de la practica</label>
+                  <input maxlength="500" class="form-control" [(ngModel)]="objReservar.nombrePractica" type="text">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="">Descripcion de la practica</label>
+                  <textarea maxlength="1000" class="form-control" [(ngModel)]="objReservar.descripcionPractica" rows="4"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group">
+                  <label>Número de estudiantes</label>
+                  <input min="0" class="form-control" [(ngModel)]="objReservar.numeroEstudiantes" type="number">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <label for="">Selecciona un archivo PDF</label>
+                  <br>
+                  <input #inputFile type="file" accept="application/pdf" (change)="onFileChange($event)" />
+
+                
+              </div>
+            </div>
+            <br>
+          </div>
+        </div>
+        <div  *ngIf="totalSeleccionados > 0"  class="row">
+            <div *ngIf="validarLoadingReservar == 0" class="col-12">
+                <button (click)="reservarLaboratorio();"  type="button" class="btn btn-block btn-outline-success btn-lg">Reservar</button>
+            </div>
+            <div *ngIf="validarLoadingReservar==1" class="col-12">
+              <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <span>Reservando...</span>
+              </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Cerrar</button>
+      </div>
+    </ng-template>
+
+
+   <!--  <div #modalReservar role="dialog" class="modal fade" id="modalReservar">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Reservar laboratorio {{objReservar.nombreDia}} de {{objReservar.horaInicio}} a {{objReservar.horaFin}}</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="">Nombre de la practica</label>
+                  <input maxlength="500" class="form-control" [(ngModel)]="objReservar.nombrePractica" type="text">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="">Descripcion de la practica</label>
+                  <textarea maxlength="1000" class="form-control" [(ngModel)]="objReservar.descripcionPractica" rows="4"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group">
+                  <label>Número de estudiantes</label>
+                  <input min="0" class="form-control" [(ngModel)]="objReservar.numeroEstudiantes" type="number">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+                 <div *ngIf="validarLoadingReservar == 0" class="col-12">
+                    <button (click)="reservarLaboratorio();"  type="button" class="btn btn-block btn-outline-success btn-lg">Reservar</button>
+                </div> 
+                <div *ngIf="validarLoadingReservar==1" class="col-12">
+                  <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span>Reservando...</span>
+                  </button>
+              </div>
+            </div>
+
+          </div>
+          <div  class="modal-footer justify-content-between">
+             <button *ngIf="validarLoadingReservar == 0" (click)="limpiarFormulario();"  type="button" class="btn btn-block btn-outline-warning btn-lg">Limpiar formulario</button>
+
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> 
+          </div>
+        </div>
+      </div>
+    </div> -->
+  </section>

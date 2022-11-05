@@ -1,0 +1,356 @@
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Reportes</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a routerLink="/inicio/perfil" style="cursor: pointer;">Perfil</a></li>
+            <li class="breadcrumb-item active">Reportes</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="card card-success">
+                    <div class="card-header">
+                      <h3 class="card-title">Listado de reportes</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <select (change)="seleccionarReporte()" [(ngModel)]="idReporte" id="selectIdReporte" class="form-control">
+                                        <option value="0">SELECCIONA UN REPORTE</option>
+                                        <option value="{{item.idReporte}}"  *ngFor="let item of arrayReportes; let i = index">{{item.nombreReporte}}</option>
+                                    </select>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div *ngIf="idReporte == '1'" class="row">
+          <div class="col-md-12">
+            <div class="card card-success">
+                <div class="card-header">
+                  <h3 class="card-title">Listado de usuarios</h3>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Cédula</th>
+                                            <th>Nombres</th>
+                                            <th>Correo</th>
+                                            <th>Correo institucional</th>
+                                            <th>Teléfono</th>
+                                            <th>Carrera</th>
+                                            <th>Roles</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr  *ngFor="let item of arrayUsuarios; let i = index">
+                                            <td>{{i+1}}</td>
+                                            <td>{{item.cedula}}</td>
+                                            <td>{{item.apellidos}} {{item.nombres}}</td>
+                                            <td>{{item.correo}}</td>
+                                            <td>{{item.correoInstitucional}}</td>
+                                            <td>{{item.telefono}}</td>
+                                            <td>{{item.carrera}}</td>
+                                            <td>
+                                                <p *ngFor="let itemRoles of item.roles; let iRoles = index">{{itemRoles.descripcionRol}}</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    
+                </div>
+            </div>
+                    
+       
+           
+          </div>
+        </div>
+        <div  *ngIf="idReporte == '2'">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-success">
+                        <div class="card-header">
+                          <h3 class="card-title">Listado de reservas por carrera</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="">Fecha inicio</label>
+                                        <input [(ngModel)]="fechaInicio" id="inputFechaInicio" name="inputFechaInicio" class="form-control" type="month">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="">Fecha fín</label>
+                                        <input [(ngModel)]="fechaFin" id="inputFechaFin" name="inputFechaFin" class="form-control" type="month">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="">Carreras</label>
+                                        <select  multiple="" [(ngModel)]="selectedCarreras" id="selectSelectCarreras" name="selectSelectCarreras"  class="form-control">
+                                            <option value="{{item.id}}"  *ngFor="let item of arrayCarreras; let i = index">{{item.nombreCarrera}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="">Laboratorios</label>
+                                        <select  [(ngModel)]="idLaboratorio"id="selectIdLaboratorio" name="selectIdLaboratorio" class="form-control">
+                                            <option value="0">SELECCIONA UN LABORATORIO</option>
+                                            <option value="{{item.id}}"  *ngFor="let item of arrayLaboratorios; let i = index">{{item.nombreLaboratorio}} ({{item.nombreUnidad}})</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button id="btnReporteReservaciones" (click)="cargarReporteReservaciones();" class="btn btn-primary btn-block"><i class="fas fa-file-export"></i> Generar</button>
+                                </div>
+                            </div>
+                            <br>
+                            
+                            <div [style.display]="validarLoadingTabla" class="row">
+                                <div class="col-12 text-center">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...
+                                </div>
+                            </div>
+                            <div [style.display]="validarTabla" class="row">
+                                <div class="col-12">
+                                    <div *ngIf="objLaboratorioSeleccionado.id != 0" class="row">
+                                        <div class="col-sm-12">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="text-center">
+                                                        <h1>{{objLaboratorioSeleccionado.nombreUnidad}}</h1>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                                <div class="col-lg-8 col-md-8 col-sm-8">
+                                                    <table class="table">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="border: 1px solid black;">Nombre del Laboratorio: </td>
+                                                                <td style="border: 1px solid black;">{{objLaboratorioSeleccionado.nombreLaboratorio}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="border: 1px solid black;">Responsable del Laboratorio: </td>
+                                                                <td style="border: 1px solid black;">{{objLaboratorioSeleccionado.apellidos}} {{objLaboratorioSeleccionado.nombres}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                                <div class="col-lg-8 col-md-8 col-sm-8">
+                                                    <div class="text-justify">
+                                                        <p style="font-size: 20;">El laboratorio de <span style="color: #000;">{{objLaboratorioSeleccionado.nombreLaboratorio}}</span> fue reservado mensualmente por la cantidad de estudiantes detallados en el siguiente gráfico: </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <br>
+
+
+
+
+
+
+                                    <div style="height: 300px;"  *ngIf="arrayChartReservas != null"  class="row">
+                                        <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                        <div  class="col-lg-8 col-md-8 col-sm-8">
+                                            
+                                            <canvas  #canvasReservas baseChart
+                                            [data]="arrayChartReservas.barChartData"
+                                            [options]="barChartOptions"
+                                            [plugins]="barChartPlugins"
+                                            [legend]="barChartLegend"
+                                            [type]="'bar'">
+        
+                                            </canvas>
+                                        </div>
+                                        <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                    </div>
+                                    <br>
+                                    <div *ngIf="arrayChartReservas != null" class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                    
+                                                        <tr>
+                                                            <td style="border-bottom: solid 0.5px black;">Meses/Carreras</td>
+                                                            <td style="border-bottom: solid 0.5px black;"  class="text-center" *ngFor="let itemCarrera of arrayChartReservas.barChartData.labels; let i = index" >{{itemCarrera}}</td>
+                                                            <td style="border-bottom: solid 0.5px black;" class="text-center">Total</td>
+                                                        </tr>
+                                                        <tr  *ngFor="let item of arrayChartReservas.barChartData.datasets; let i = index">
+                                                            <td style="border-bottom: solid 0.5px black;">{{item.label}}</td>
+                                                            <td style="border-bottom: solid 0.5px black;" class="text-center" *ngFor="let itemData of item.data; let i = index">{{itemData}}</td>
+                                                            <td style="border-bottom: solid 0.5px black;" class="text-center">{{item.totalReservas}}</td>
+                                                        </tr> 
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="arrayChartReservas != null" class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <button id="btnImprimirReporteReservas" name="btnImprimirReporteReservas" class="btn btn-block btn-outline-success btn-lg" (click)="imprimirReporteReservas()"><i class="fas fa-print"></i>   Imprimir</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                            
+                           
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
+
+        <div  *ngIf="idReporte == '3'">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-success">
+                        <div class="card-header">
+                          <h3 class="card-title">Reporte de Materiales</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="">Laboratorios</label>
+                                        <select (change)="cargarReporteMateriales();" [(ngModel)]="idLaboratorio" name="selectIdLaboratorioMateriales" id="selectIdLaboratorioMateriales" class="form-control">
+                                            <option value="0">SELECCIONA UN LABORATORIO</option>
+                                            <option value="{{item.id}}"  *ngFor="let item of arrayLaboratorios; let i = index">{{item.nombreLaboratorio}} ({{item.nombreUnidad}})</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="arrayMateriales.length > 0" class="row">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="text-center">
+                                                <h1>{{objLaboratorioSeleccionado.nombreUnidad}}</h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                        <div class="col-lg-8 col-md-8 col-sm-8">
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="border: 1px solid black;">Nombre del Laboratorio: </td>
+                                                        <td style="border: 1px solid black;">{{objLaboratorioSeleccionado.nombreLaboratorio}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border: 1px solid black;">Responsable del Laboratorio: </td>
+                                                        <td style="border: 1px solid black;">{{objLaboratorioSeleccionado.apellidos}} {{objLaboratorioSeleccionado.nombres}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                        
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                        <div class="col-lg-8 col-md-8 col-sm-8">
+                                            <div class="text-justify">
+                                                <p style="font-size: 20;">El laboratorio de <span style="color:#000">{{objLaboratorioSeleccionado.nombreLaboratorio}}</span> presenta los materiales detallados a continuación en la siguiente tabla: </p>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                    </div>
+                                
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                        <div class="col-lg-8 col-md-8 col-sm-8">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="tableMaterial">Cantidad</th>
+                                                            <th class="tableMaterial">Material</th>
+                                                            <th class="tableMaterial">Estado</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let item of arrayMateriales; let i = index" >
+                                                            <td class="tableMaterial">{{item.stock}}</td>
+                                                            <td class="tableMaterial">{{item.nombreMaterial}}</td>
+                                                            <td class="tableMaterial">
+                                                                <tr style="text-align: center;" *ngFor="let itemCondicion of item.arrayCondicion; let iCondicion = index" >
+                                                                    <td style="text-align: center;">{{itemCondicion.condicion}}</td>
+                                                                    <td style="text-align: center;">{{itemCondicion.cantidad}} </td>
+                                                                </tr>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <button id="btnImprimirReporteMateriales" class="btn btn-block btn-outline-success btn-lg" (click)="imprimirReporteMateriales()"><i class="fas fa-print"></i>   Imprimir</button>
+                                        </div>
+                                    </div>
+                                </div>
+     
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

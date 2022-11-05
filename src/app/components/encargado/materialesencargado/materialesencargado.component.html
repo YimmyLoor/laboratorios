@@ -1,0 +1,266 @@
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Materiales</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a routerLink="/inicio/perfil" style="cursor: pointer;">Perfil</a></li>
+            <li class="breadcrumb-item active">Materiales</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+      <div class="row">
+          <div class="col-md-12">
+              <div class="card card-success">
+                <div class="card-header">
+                  <h3 class="card-title">Formulario</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="form-group">
+                          <select  [(ngModel)]="idLaboratorio" class="form-control">
+                              <option value="0">SELECCIONA UN LABORATORIO</option>
+                              <option value="{{item.id}}"  *ngFor="let item of arrayLaboratorios; let i = index">{{item.nombreLaboratorio}} ({{item.nombreUnidad}})</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="form-group">
+                                <label for="">Nombre</label>
+                                <input [(ngModel)]="nombreMaterial" type="text" maxlength="500" class="form-control" placeholder="Nombre del material">
+                            </div>
+                            <div class="form-group">
+                                <label for="">Descripción</label>
+                                <textarea [(ngModel)]="descripcionMaterial" type="text" maxlength="1000" class="form-control" placeholder="Descripción del material"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Stock</label>
+                                <input [(ngModel)]="stockMaterial" step="1" type="number" class="form-control" placeholder="Stock del material">
+                            </div>
+                            <div class="form-group">
+                                <label for="">Foto</label><br>
+                                <input #inputFile accept="image/*" type="file" (change)="onFileChange($event)" />
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6">
+                                    <h6>Recortar</h6>
+                                    <image-cropper 
+                                    [imageChangedEvent]="imgChangeEvt" 
+                                    [maintainAspectRatio]="true" 
+                                    [aspectRatio]="4 / 3"
+                                    format="png" 
+                                    (imageCropped)="cropImg($event)" 
+                                    (imageLoaded)="imgLoad()"
+                                    (cropperReady)="initCropper()" 
+                                    (loadImageFailed)="imgFailed()">
+                                    </image-cropper>
+                                </div>
+                                <div class="col-lg-6 col-md-6">
+                                    <h6>Vista previa</h6>
+                                    <img style="width: 100%;" [src]="cropImgPreview" />
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                      <br>
+                      <div  class="row">
+                        
+                        <div  *ngIf="validarLoading==0" class="col-12">
+                            <button (click)="guardarMaterial()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                        </div>
+                        <div *ngIf="validarLoading==1" class="col-12">
+                            <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span>Guardando...</span>
+                            </button>
+                        </div> 
+                    </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                      <h3 class="card-title">Listado de Materiales</h3>
+                    </div>
+  
+                    <div class="card-body">
+                      <div *ngIf="validarLoadingTabla == 1" class="row">
+                        <div class="col-12 text-center">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...
+                        </div>
+                      </div>
+                      <div *ngIf="validarLoadingTabla == 0" class="table-responsive">
+                        
+                           <table class="table row-border hover">
+                              <thead>
+                                  <tr>
+                                      <th>#</th>
+                                      <th>Unidad</th>
+                                      <th>Laboratorio</th>
+                                      <th>Nombre</th>
+                                      <th>Detalle</th>
+                                      <th>Foto</th>
+                                      <th>Stock</th>
+                                      <th>Condición</th>
+                                      <th>Opciones</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                    <tr  *ngFor="let item of arrayMateriales; let i = index">
+                                        <td>{{i+1}}</td>
+                                        <td>{{item.nombreUnidad}}</td>
+                                        <td>{{item.nombreLaboratorio}}</td>
+                                        <td>{{item.nombreMaterial}}</td>
+                                        <td>{{item.descripcionMaterial}}</td>
+                                        <td style="width: 30%;">
+                                            <img style="width: 100%;" *ngIf="item.rutaFoto == ''" src="assets/admin/app/logo.png" alt="">
+                                            <img data-toggle="modal" data-target="#modalVerBanner"  (click)="verMaterial(item)" style="width: 30%; cursor: pointer;" *ngIf="item.rutaFoto != ''" src="{{item.rutaFoto}}" alt="">
+                                        </td>
+                                       
+                                        <td>{{item.stock}}</td>
+                                        <td>
+                                          <ul class="list-group list-group-unbordered mb-3">
+                                            <li  *ngFor="let itemCondicion of item.arrayCondicion; let iCondicion = index" class="list-group-item">
+                                              <b>{{itemCondicion.condicion}}</b> <a class="float-right">{{itemCondicion.cantidad}}</a>
+                                            </li>
+                                          </ul>
+                                          <button  data-toggle="modal" data-target="#modalCondicion" (click)="presentarFormularioCondicion(item)" type="button" class="btn btn-block btn-success btn-xs">Modificar</button><br>
+                                        </td>
+                                        <td>
+                                            <button (click)="presentarMenuEliminarMaterial(item)" type="button" class="btn btn-block btn-outline-danger btn-xs">Eliminar</button>
+                                            <button  data-toggle="modal" data-target="#modalModificar" (click)="presentarFormularioModificar(item)" type="button" class="btn btn-block btn-success btn-xs">Modificar</button><br>
+
+                                        </td>
+                                  </tr>
+                              </tbody>
+                          </table> 
+                      </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+    <div #modalModificar class="modal fade" id="modalModificar">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Modificar</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div  class="row">
+              <div class="col-lg-5 col-md-5">
+                  <label>Foto</label>
+                  <img style="width: 30%; cursor: pointer;" src="{{objModificar.rutaFoto}}" alt="">
+
+                  <div class="form-group">
+                      <label for="">Nombre</label>
+                      <input [(ngModel)]="objModificar.nombreMaterial" type="text" maxlength="500" class="form-control" placeholder="Nombre del material">
+                  </div>
+                  <div class="form-group">
+                      <label for="">Descripción</label>
+                      <textarea [(ngModel)]="objModificar.descripcionMaterial" type="text" maxlength="1000" class="form-control" placeholder="Descripción del material"></textarea>
+                  </div>
+                  <div class="form-group">
+                      <label for="">Foto</label><br>
+                      <input #inputFileModificar accept="image/*" type="file" (change)="onFileChangeModificar($event)" />
+                  </div>
+              </div>
+              <div class="col-lg-7 col-md-7">
+                  <div class="row">
+                      <div class="col-lg-6 col-md-6">
+                          <h6>Recortar</h6>
+                          <image-cropper 
+                          [imageChangedEvent]="objModificar.imgChangeEvt" 
+                          [maintainAspectRatio]="true" 
+                          [aspectRatio]="4 / 3"
+                          format="png" 
+                          (imageCropped)="cropImgModificar($event)" 
+                          (imageLoaded)="imgLoad()"
+                          (cropperReady)="initCropper()" 
+                          (loadImageFailed)="imgFailed()">
+                          </image-cropper>
+                      </div>
+                      <div class="col-lg-6 col-md-6">
+                          <h6>Vista previa</h6>
+                          <img style="width: 100%;" [src]="objModificar.cropImgPreview" />
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="row">
+              <div  *ngIf="objModificar.validarLoading==0" class="col-12">
+                  <button (click)="modificarMaterial()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+              </div>
+              <div *ngIf="objModificar.validarLoading==1" class="col-12">
+                  <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span>Guardando...</span>
+                  </button>
+              </div>
+          </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div #modalCondicion class="modal fade" id="modalCondicion">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Modificar</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <label for="">Stock</label>
+            <input [(ngModel)]="objCondicion.stock" class="form-control" type="number" placeholder="Stock actual">
+            <br>
+            <div *ngFor="let itemCondicion of objCondicion.arrayCondicion; let iCondicion = index" class="form-group">
+              <label for="">{{itemCondicion.condicion}}</label>
+              <input [(ngModel)]="itemCondicion.cantidad" class="form-control" type="number" placeholder="{{itemCondicion.condicion}}">
+            </div>
+          
+            <div class="row">
+                <div  *ngIf="validarLoading==0" class="col-12">
+                    <button (click)="modificarCondicion()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                </div>
+                <div *ngIf="validarLoading==1" class="col-12">
+                    <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span>Ingresando...</span>
+                    </button>
+                </div>
+            </div> 
+
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+</section>

@@ -1,0 +1,311 @@
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Usuarios</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a routerLink="/inicio/perfil" style="cursor: pointer;">Perfil</a></li>
+            <li class="breadcrumb-item active">Usuarios</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">Formulario de registro</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                        <label for="">Rol</label>
+                                        <select (change)="setIdentificadorRol()" [(ngModel)]="objRegistro.idRol" class="form-control">
+                                            <option value="0">SELECCIONA UN ROL</option>
+                                            <option value="{{item.id}}"  *ngFor="let item of arrayRoles; let i = index">{{item.descripcionRol}}</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="col-sm-6">
+                                            <div class="form-group clearfix">
+                                              <div class="icheck-primary d-inline" *ngFor="let item of arrayTipoIdentificacion">
+                                                <input type="radio"
+                                                  id="{{item.tipo}}"
+                                                  name="identificacion"
+                                                  [value]="item.tipo"
+                                                  [(ngModel)]="objRegistro.idTipoIdentificacion"
+                                                  (ngModelChange)="choose($event)" />
+                                                  <label for="{{item.tipo}}">
+                                                    {{item.nombre}}
+                                                  </label>
+                                              </div>
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                                <label for="">Cédula o pasaporte *</label>
+                                <input [(ngModel)]="objRegistro.cedula" class="form-control" type="text" placeholder="Cédula o pasaporte">
+                                <br>
+                                <label for="">Nombres *</label>
+                                <input [(ngModel)]="objRegistro.nombres" class="form-control" type="text" placeholder="Nombres">
+                                <br>
+                                <label for="">Apellidos *</label>
+                                <input [(ngModel)]="objRegistro.apellidos" class="form-control" type="text" placeholder="Apellidos">
+                                
+                                <br>
+
+                                
+
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Carrera</label>
+                                            <select [(ngModel)]="objRegistro.idCarrera" class="form-control">
+                                                <option value="0">SELECCIONA UNA CARRERA</option>
+                                                <option value="{{item.id}}"  *ngFor="let item of arrayCarreras; let i = index">{{item.nombreCarrera}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <label for="">Correo personal (opcional)</label>
+                                <input [(ngModel)]="objRegistro.correo" class="form-control" type="mail" placeholder="Correo personal">
+                                
+                                <br>
+                                <label for="">Correo institucional *</label>
+                                <input [(ngModel)]="objRegistro.correoInstitucional" class="form-control" type="mail" placeholder="Correo institucional">
+                                
+                                <br>                                
+                                <label for="">Teléfono *</label>
+                                <input [(ngModel)]="objRegistro.telefono" (keypress)="valideKey($event);"  class="form-control" pattern="[0-9]+" type="tel" placeholder="Teléfono">
+                            </div>
+                        </div>
+
+                    
+                        <br>
+                        <div class="row">
+                            <div  *ngIf="validarLoading==0" class="col-12">
+                                <button (click)="guardarUsuario()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                            </div>
+                            <div *ngIf="validarLoading==1" class="col-12">
+                                <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span>Ingresando...</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            
+          </div>
+        </div>
+       
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                  <div class="card-header">
+                    <h3 class="card-title">Listado de Usuarios</h3>
+                  </div>
+
+                  <div class="card-body">
+                    <div [style.display]="validarLoadingTabla" class="row">
+                        <div class="col-12 text-center">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...
+                        </div>
+                    </div>
+                    <div [style.display]="validarTabla" class="table-responsive">
+                        <table  datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table row-border hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Cédula</th>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th>Correo institucional</th>
+                                    <th>Teléfono</th>
+                                    <th>Carrera</th>
+                                    <th>Roles</th>
+                                    <th>Opciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr  *ngFor="let item of arrayUsuarios; let i = index">
+                                    <td>{{i+1}}</td>
+                                    <td>{{item.cedula}}</td>
+                                    <td>{{item.apellidos}} {{item.nombres}}</td>
+                                    <td>{{item.correo}}</td>
+                                    <td>{{item.correoInstitucional}}</td>
+                                    <td>{{item.telefono}}</td>
+                                    <td>{{item.nombreCarrera}}</td>
+                                    <td>
+                                      
+                                        <p *ngFor="let itemRoles of item.roles; let iRoles = index">{{itemRoles.descripcionRol}}</p>
+                                        <button  data-toggle="modal" data-target="#modalRol" (click)="presentarFormularioRoles(item)" type="button" class="btn btn-block btn-success btn-xs">Roles</button><br>
+
+
+                                    </td>
+                                    <td>
+                                        <button  data-toggle="modal" data-target="#modalModificar" (click)="presentarFormularioModificar(item)" type="button" class="btn btn-block btn-outline-success btn-xs">Modificar</button><br>
+                                        <button *ngIf="item.validarEnviarClave == false" (click)="presentarMenuEnviarClave(item)" type="button" class="btn btn-block btn-warning btn-xs">Enviar clave</button><br>
+                                       
+                                        <button  *ngIf="item.validarEnviarClave == true"  class="btn btn-block btn-warning btn-xs" type="button" disabled>
+                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                            <span>Enviando...</span>
+                                        </button>
+                               
+                                        
+                                        <button (click)="presentarMenuEliminarUsuario(item)" type="button" class="btn btn-block btn-outline-danger btn-xs">Eliminar</button>
+                                       
+
+                                    </td>
+                                   
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <div #modalRol class="modal fade" id="modalRol">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Modificar</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <div class="col-lg-12 col-md-12">
+
+                    <div class="row"  *ngFor="let item of arrayRoles2 let i = index">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="icheck-primary d-inline">
+                                <input type="checkbox" id="{{item.id}}{{i}}" [(ngModel)]="item.checked">
+                                <label for="{{item.id}}{{i}}">
+                                  {{item.descripcionRol}}
+                                </label>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    
+                  </div>
+                  <div class="col-lg-12 col-md-12">
+     
+                  </div>
+              </div>
+              <div class="row">
+                 <div  *ngIf="validarLoadingModalRoles==0" class="col-12">
+                      <button (click)="modificarRolesUsuario()" type="button" class="btn btn-block btn-outline-success btn-lg">Modificar</button>
+                  </div>
+                  <div *ngIf="validarLoadingModalRoles==1" class="col-12">
+                      <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                          <span>Guardando...</span>
+                      </button>
+                  </div>
+              </div>
+  
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div #modalModificar class="modal fade" id="modalModificar">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Modificar</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label for="">Carrera</label>
+                        <select [(ngModel)]="objModificar.idCarrera" class="form-control">
+                            <option value="0">SELECCIONA UNA CARRERA</option>
+                            <option value="{{item.id}}"  *ngFor="let item of arrayCarreras; let i = index">{{item.nombreCarrera}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+
+                    <label for="">Cédula o pasaporte *</label>
+                    <input [(ngModel)]="objModificar.cedula" class="form-control" type="text" placeholder="Cédula o pasaporte">
+                    <br>
+                    <label for="">Nombres *</label>
+                    <input [(ngModel)]="objModificar.nombres" class="form-control" type="text" placeholder="Nombres">
+                    <br>
+                    <label for="">Apellidos *</label>
+                    <input [(ngModel)]="objModificar.apellidos" class="form-control" type="text" placeholder="Apellidos">
+                    
+                    <br>
+
+                    
+
+                </div>
+                <div class="col-lg-12 col-md-12">
+                    <label for="">Correo personal (opcional)</label>
+                    <input [(ngModel)]="objModificar.correo" class="form-control" type="mail" placeholder="Correo personal">
+                    
+                    <br>
+                    <label for="">Correo institucional *</label>
+                    <input [(ngModel)]="objModificar.correoInstitucional" class="form-control" type="mail" placeholder="Correo institucional">
+                    
+                    <br>
+                    <label for="">Teléfono *</label>
+                    <input [(ngModel)]="objModificar.telefono" class="form-control" type="tel" placeholder="Teléfono">
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div  *ngIf="validarLoadingModificar==0" class="col-12">
+                    <button (click)="modificarUsuario()" type="button" class="btn btn-block btn-outline-success btn-lg">Modificar</button>
+                </div>
+                <div *ngIf="validarLoadingModificar==1" class="col-12">
+                    <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span>Modificando...</span>
+                    </button>
+                </div>
+            </div>
+
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>

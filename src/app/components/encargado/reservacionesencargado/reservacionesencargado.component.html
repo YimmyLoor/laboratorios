@@ -1,0 +1,107 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card card-primary card-outline">
+          <div class="card-body box-profile">
+            <h3 class="profile-username text-center">Listado de laboratorios</h3>
+            <ul class="list-group list-group-unbordered mb-3">
+              <li (click)="seleccionarLaboratorio(item);" [style.background-color]="item.color" style="cursor: pointer;" *ngFor="let item of arrayLaboratorios; let i = index" class="list-group-item">
+                <b>{{item.nombreLaboratorio}}</b> <p>{{item.nombreUnidad}}</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-9" *ngIf="objLaboratorioSeleccionado.nombreLaboratorio == ''">
+        <div class="card">
+          <div class="card-body">
+            <div class="tab-content">
+              <div class="callout callout-success">
+                <h5>Selecciona un laboratorio en el menú</h5>
+                <p>Selecciona el horario que vas a consultar</p>
+              </div>
+              <div class="callout callout-success">
+                <h5>Accede al detalle de las reservas</h5>
+                <p></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-9" *ngIf="objLaboratorioSeleccionado.nombreLaboratorio != ''">
+          <div class="card">
+            <div class="card-header p-2">
+              <h5 *ngIf="objLaboratorioSeleccionado.nombreLaboratorio != ''">{{objLaboratorioSeleccionado.nombreLaboratorio}} - {{objLaboratorioSeleccionado.nombreUnidad}}</h5>
+            </div>
+            <div class="card-body">
+              <div class="tab-content">
+                
+                <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+
+
+              </div>
+            </div>
+          </div>
+         
+      </div>
+    </div>
+  </div>
+  <ng-template #modalDetalleReserva let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Detalle de la reserva</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-12">
+          <div class="row">
+            <div class="col-12 text-center">
+              <h4>{{objDetalleReservar.nombreDia}} {{objDetalleReservar.fecha}} de {{objDetalleReservar.horaInicio}} a {{objDetalleReservar.horaFin}}</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="table-responsive">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td>Cédula:</td>
+                  <td style="font-weight: bold;">{{objDetalleReservar.cedula}}</td>
+                </tr>
+                <tr>
+                  <td>Docente:</td>
+                  <td style="font-weight: bold;">{{objDetalleReservar.apellidos}} {{objDetalleReservar.apellidos}}</td>
+                </tr>
+                <tr>
+                  <td>Nombre de la práctica:</td>
+                  <td style="font-weight: bold;">{{objDetalleReservar.nombrePractica}}</td>
+                </tr>
+                <tr>
+                  <td>Descripción de la práctica:</td>
+                  <td style="font-weight: bold;">{{objDetalleReservar.descripcionPractica}}</td>
+                </tr>
+                <tr>
+                  <td>Número de estudiantes:</td>
+                  <td style="font-weight: bold;">{{objDetalleReservar.numeroEstudiantes}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Cerrar</button>
+    </div>
+  </ng-template>
+</section>
+
+
+

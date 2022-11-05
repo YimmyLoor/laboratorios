@@ -1,0 +1,178 @@
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Perfil</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active">Perfil</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-body">
+                    <div class="row">
+                      <div class="col-sm-12">
+                            <!-- Profile Image -->
+                            <div class="card card-primary card-outline">
+                              <div class="card-body box-profile">
+                                <div class="text-center">
+                                  <img *ngIf="objUsuario.rutaFoto == ''" class="profile-user-img img-fluid img-circle" src="assets/admin/app/user.png" alt="User profile picture">
+                                  <img *ngIf="objUsuario.rutaFoto != ''" class="profile-user-img img-fluid img-circle" src="{{objUsuario.rutaFoto}}" alt="User profile picture">
+
+                                </div>
+
+                                <h3 class="profile-username text-center">{{objUsuario.apellidos}} {{objUsuario.nombres}}</h3>
+                
+                                <p class="text-muted text-center">{{objUsuario.usuario}}</p>
+                                <a data-toggle="modal" data-target="#modalCambiarFoto" (click)="limpiarFormulario()" style="cursor: pointer;" class="btn btn-primary btn-block"><b>Cambiar foto</b></a>
+
+                                <ul class="list-group list-group-unbordered mb-3">
+                                  <li class="list-group-item">
+                                    <b>Correo</b> <a class="float-right">{{objUsuario.correo}}</a>
+                                  </li>
+                                  <li class="list-group-item">
+                                    <b>Correo institucional</b> <a class="float-right">{{objUsuario.correoInstitucional}}</a>
+                                  </li>
+                                  <li class="list-group-item">
+                                    <b>Teléfono</b> <a class="float-right">{{objUsuario.telefono}}</a>
+                                  </li>
+                                  <li class="list-group-item">
+                                    <b>Contraseña</b> <a data-toggle="modal" data-target="#modalCambiarClave" style="cursor: pointer;" class="float-right">Cambiar</a>
+                                  </li>
+                                </ul>
+                
+                              </div>
+                              <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div #modalCambiarFoto class="modal fade" id="modalCambiarFoto">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Cambiar foto</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <div class="col-lg-6 col-md-6">
+  
+                 <!--      <h3 class="mb-5">Angular Image Crop Example</h3> -->
+                      <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                          <input #inputFileFotoPerfil id="inputFileFotoPerfil2" name="inputFileFotoPerfil2" accept="image/*" type="file" (change)="onFileChange($event)" />
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                          <image-cropper 
+                            [imageChangedEvent]="imgChangeEvt" 
+                            [maintainAspectRatio]="true" 
+                            [aspectRatio]="4 / 4"
+                            [resizeToWidth]="256" 
+                            format="png" 
+                            (imageCropped)="cropImg($event)" 
+                            (imageLoaded)="imgLoad()"
+                            (cropperReady)="initCropper()" 
+                            (loadImageFailed)="imgFailed()">
+                          </image-cropper>
+                        </div>
+                      </div>
+                  </div>
+                  <div class="col-lg-6 col-md-6">
+                    <div class="col-md-4">
+                      <h6>Vista previa</h6>
+                      <img [src]="cropImgPreview" />
+                    </div>
+                  </div>
+              </div>
+              <br>
+              <div class="row">
+                  <div  *ngIf="validarLoadingFotoPerfil==0" class="col-12">
+                      <button id="btnGuardarFotoPerfil" name="btnGuardarFotoPerfil" (click)="guardarFotoPerfil()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                  </div>
+                  <div *ngIf="validarLoadingFotoPerfil==1" class="col-12">
+                      <button id="btnGuardarFotoPerfil" name="btnGuardarFotoPerfil" class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                          <span>Guardando...</span>
+                      </button>
+                  </div> 
+              </div>
+  
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button id="btnCerrarModalFoto" type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div #modalCambiarClave class="modal fade" id="modalCambiarClave">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Contraseña</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="">Contraseña actual</label>
+                    <input id="inputClaveActual" name="inputClaveActual" [(ngModel)]="objCambiarClave.claveActual" maxlength="16" type="password" class="form-control">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="">Nueva contraseña</label>
+                    <input id="inputNuevaClave" name="inputNuevaClave" [(ngModel)]="objCambiarClave.nuevaClave" maxlength="16" type="password" class="form-control">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="">Repetir contraseña</label>
+                    <input id="inputRepetirNuevaClave" name="inputRepetirNuevaClave" [(ngModel)]="objCambiarClave.repetirNuevaClave" maxlength="16" type="password" class="form-control">
+                  </div>
+                </div>
+              </div>
+           
+              <div class="row">
+                  <div  *ngIf="validarLoadingClave==0" class="col-12">
+                      <button  id="btnModificarClave" name="btnModificarClave"  (click)="modificarClave()" type="button" class="btn btn-block btn-outline-success btn-lg">Cambiar</button>
+                  </div>
+                  <div *ngIf="validarLoadingClave==1" class="col-12">
+                      <button id="btnModificarClave" name="btnModificarClave"  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                          <span>Cambiando...</span>
+                      </button>
+                  </div>
+              </div>
+  
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button id="btnCerrar"name="btnCerrar" type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</section>

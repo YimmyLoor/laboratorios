@@ -1,0 +1,8 @@
+::ng-deep .fc-event{
+    cursor: pointer;
+}
+
+
+::ng-deep .fc-daygrid-day{
+    cursor: pointer;
+}

@@ -1,0 +1,83 @@
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Detalle de reservaciones</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a routerLink="/inicio/perfil" style="cursor: pointer;">Perfil</a></li>
+            <li class="breadcrumb-item active">Detalle</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                    <h3 class="card-title">Listado de reservaciones</h3>
+                    </div>
+
+                    <div class="card-body">
+                    
+                        <div [style.display]="validarLoadingTabla" class="row">
+                            <div class="col-12 text-center">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...
+                            </div>
+                        </div>
+                        <div  [style.display]="validarTabla" class="table-responsive">
+                        
+                        <table class="table row-border hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Práctica</th>
+                                    <th>Laboratorio</th>
+                                    <th>Fecha</th>
+                                    <th>Horario</th>
+                                    <th>Documento</th>
+                                    <th>Comprobante</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of arrayReservaciones; let i = index">
+                                    <td>{{i+1}}</td>
+                                    <td>{{item.nombrePractica}}</td>
+                                    <td>{{item.nombreLaboratorio}}</td>
+                                    <td>{{item.fechaReservacion}}</td>
+                                    <td>
+                                        <p *ngFor="let itemHorario of item.arrayReserva; let iHorario = index">{{itemHorario.horaInicio}} - {{itemHorario.horaFin}}</p>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-block btn-outline-success btn-xs" target="_blank" href="{{item.rutaArchivo}}">Documento</a></td>
+                                    <td>
+                                        <button class="btn btn-block btn-outline-primary btn-xs" (click)="descargarComprobante(item);">Descargar</button>
+
+                                    </td>
+                                </tr>
+                                    <!-- <tr  *ngFor="let item of arrayReservaciones; let i = index">
+                                        <td>{{i+1}}</td>
+                                        <td><a class="btn btn-block btn-outline-success btn-xs" target="_blank" href="{{item.link}}">Link</a></td>
+                                        <td style="width: 30%;">
+                                            <img style="width: 100%;" *ngIf="item.rutaBanner == ''" src="assets/admin/app/logo.png" alt="">
+                                            <img data-toggle="modal" data-target="#modalVerBanner"  (click)="verBanner(item)" style="width: 100%; cursor: pointer;" *ngIf="item.rutaBanner != ''" src="{{item.rutaBanner}}" alt="">
+
+                                        </td>
+                                        <td>
+                                            <button (click)="presentarMenuEliminarBanner(item)" type="button" class="btn btn-block btn-outline-danger btn-xs">Eliminar</button>
+
+                                        </td>
+                                </tr> -->
+                            </tbody>
+                        </table> 
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

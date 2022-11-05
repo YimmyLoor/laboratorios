@@ -1,0 +1,153 @@
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Configurar laboratorios</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a routerLink="/inicio/perfil" style="cursor: pointer;">Perfil</a></li>
+            <li class="breadcrumb-item active">Configurar laboratorios</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-success">
+                  <div class="card-header">
+                    <h3 class="card-title">Formulario de registro</h3>
+                  </div>
+                  <div class="card-body">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                            <select (change)="filtrarLaboratorios()" [(ngModel)]="idUnidad" class="form-control">
+                                <option value="0">SELECCIONA UNA UNIDAD</option>
+                                <option value="{{item.id}}"  *ngFor="let item of arrayUnidades; let i = index">{{item.nombreUnidad}} ({{item.nombreCarrera}})</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                            <select (change)="filtrarConfiguracionLaboratorio()" [(ngModel)]="idLaboratorio" class="form-control">
+                                <option value="0">SELECCIONA UN LABORATORIO</option>
+                                <option value="{{item.id}}"  *ngFor="let item of arrayLaboratoriosView; let i = index">{{item.nombreLaboratorio}}</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div *ngIf="validarLoadingTabla == 1" class="row">
+                        <div class="col-12 text-center">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cargando...
+                        </div>
+                      </div>
+                      <div *ngIf="validarLoadingTabla == 0" class="row">
+                        <div class="col-12">
+                          <div *ngIf="idLaboratorio != '0'" class="row">
+                            <div class="col-sm-3">
+                              <div class="form-group">
+                                <label for="">Hora inicio</label>
+                                <input *ngIf="validarReservadoGeneral == false" [(ngModel)]="horaInicio" type="time" class="form-control">
+                                <input *ngIf="validarReservadoGeneral == true" disabled [(ngModel)]="horaInicio" type="time" class="form-control">
+                              </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="">Hora fín</label>
+                                  <input *ngIf="validarReservadoGeneral == false"  [(ngModel)]="horaFin" type="time" class="form-control">
+                                  <input *ngIf="validarReservadoGeneral == true" disabled  [(ngModel)]="horaFin" type="time" class="form-control">
+                                </div>
+                              </div>
+                              <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="">Intervalo</label>
+                                    <input *ngIf="validarReservadoGeneral == false"  [(ngModel)]="intervalo" type="time" class="form-control">
+                                    <input *ngIf="validarReservadoGeneral == true" disabled [(ngModel)]="intervalo" type="time" class="form-control">
+                                </div>
+                              </div>
+                              <div class="col-sm-3">
+                                <div *ngIf="validarReservadoGeneral == false" class="form-group">
+                                    <label for="">Cargar</label>
+                                    <button  (click)="cargarHorarioConfigurarLaboratorio(arrayConfiguracionLaboratorioServidor)" type="button" class="btn btn-block btn-outline-success btn-md">Cargar</button>
+    
+                                    
+                                </div>
+                              </div>
+                          </div>
+                          <div class="row" *ngIf="arrayConfiguracionView.diasCabecera">
+                            <div class="table-responsive">
+                                <table  class="table">
+                                    <thead>
+                                        <tr>
+                                            <th  *ngFor="let item of arrayConfiguracionView.diasCabecera let i = index" >
+                                              
+                                              <div class="icheck-primary d-inline">
+                                                <input (change)="seleccionarTodoPorDia($event)" [(ngModel)]="item.checked" type="checkbox" id="{{item.nombreDia}}" value="{{item.id}}">
+    
+                                                <label for="{{item.nombreDia}}">
+                                                  {{item.nombreDia}}
+                                                </label>
+                                              </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of arrayConfiguracionView.horasCuerpo let i = index">
+                                            <td [style.background-color]="itemHora.colorFondo" *ngFor="let itemHora of item.horas" >
+                                              <!-- <div class="icheck-primary d-inline">
+                                                <input type="checkbox" id="{{itemHora.nombreDia}}{{i}}" checked="{{itemHora.checked}}" [(ngModel)]="itemHora.checked"  value="{{itemHora.checked}}">
+                                                <label for="{{itemHora.nombreDia}}{{i}}">
+                                                  {{itemHora.horaInicio}} - {{itemHora.horaFin}}
+                                                </label>
+                                              </div>  -->
+                                              <div class="icheck-primary d-inline">
+                                                <input *ngIf="itemHora.validarReservado == false" type="checkbox" id="{{itemHora.nombreDia}}{{i}}" [(ngModel)]="itemHora.checked">
+                                                <input *ngIf="itemHora.validarReservado == true" disabled type="checkbox" id="{{itemHora.nombreDia}}{{i}}" [(ngModel)]="itemHora.checked">
+                                                <label for="{{itemHora.nombreDia}}{{i}}">
+                                                  {{itemHora.horaInicio}} - {{itemHora.horaFin}} 
+                                                </label>
+                                              </div>
+                                            </td>
+                                        </tr>
+       
+                                    </tbody>
+                                </table>
+                                <button *ngIf="validarLoading == 0" (click)="guardarConfiguracionLaboratorio()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                            
+                                <button *ngIf="validarLoading == 1" class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span>Guardando...</span>
+                                </button>
+                       
+                            </div>
+                          </div>
+
+
+
+                        </div>
+                      </div>
+                      
+                      
+            <!--           <div class="row">
+                          <div  *ngIf="validarLoading==0" class="col-12">
+                              <button (click)="guardarLaboratorio()" type="button" class="btn btn-block btn-outline-success btn-lg">Guardar</button>
+                          </div>
+                          <div *ngIf="validarLoading==1" class="col-12">
+                              <button  class="btn btn-block btn-outline-success btn-lg" type="button" disabled>
+                                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                  <span>Ingresando...</span>
+                              </button>
+                          </div>
+                      </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

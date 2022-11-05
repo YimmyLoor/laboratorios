@@ -1,0 +1,23 @@
+td{
+    font-weight: bold;
+    text-align: left;
+}
+.verticalTableHeader {
+    text-align:center;
+    white-space:nowrap;
+    transform-origin:50% 50%;
+    transform: rotate(90deg);
+
+}
+.verticalTableHeader:before {
+    content:'';
+    padding-top:50%;/* takes width as reference, + 10% for faking some extra padding */
+    display:inline-block;
+    vertical-align:middle;
+}
+
+.tableMaterial{
+    border: solid 1px black;
+    vertical-align: middle;
+    text-align: center;
+}
